@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-
-function Cards() {
+import "./Cards.css";
+function Cards({ currentScore, setCurrentScore, bestScore, setBestScore }) {
   const [cards, setCards] = useState([]);
   const [isClicked, setIsClicked] = useState(new Set());
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentScore, setCurrentScore] = useState(0);
-  const [bestScore, setBestScore] = useState(0);
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -33,10 +31,10 @@ function Cards() {
     return cards;
   };
   const extractMostPopularChars = (json) => {
-    const top20 = json.data
+    const top = json.data
       .sort((a, b) => (b.favorites || 0) - (a.favorites || 0))
-      .slice(0, 20);
-    return shuffleCards(top20).map((char) => ({
+      .slice(0, 16);
+    return shuffleCards(top).map((char) => ({
       id: char.character.mal_id,
       name: char.character.name.split(", ").reverse().join(" "),
       image: char.character.images?.jpg?.image_url,
@@ -50,14 +48,16 @@ function Cards() {
         newSet.add(id);
         return newSet;
       });
-      setCurrentScore(prev => prev + 1);
-      if(currentScore > bestScore) {
-        setBestScore(currentScore);
-      }  
-    }
-    else {      
+      setCurrentScore((prev) => prev + 1);
+    } else {
+      if (currentScore + 1 > bestScore) {
+        setBestScore(currentScore + 1);
+      }
       setCurrentScore(0);
+      setIsClicked(new Set());
     }
+    const shuffled = shuffleCards(cards);
+    setCards([...shuffled]);
   };
   if (isLoading) return <div>Cards Loading...</div>;
   if (error) return <div>Error: {error}</div>;

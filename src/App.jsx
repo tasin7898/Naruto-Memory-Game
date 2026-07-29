@@ -4,10 +4,17 @@ import Cards from "./components/Cards";
 import "./App.css";
 
 function App() {
+  const [currentScore, setCurrentScore] = useState(0);
+  const [bestScore, setBestScore] = useState(0);
   return (
     <>
-      <Header />
-      <Cards />
+      <Header currentScore={currentScore} bestScore={bestScore}/>
+      <Cards
+        currentScore={currentScore}
+        setCurrentScore={setCurrentScore}
+        bestScore={bestScore}
+        setBestScore={setBestScore}
+      />
     </>
   );
 }
